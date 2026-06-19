@@ -243,6 +243,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_mini_sprite:
+    dependency: transitive
+    description:
+      name: flutter_mini_sprite
+      sha256: "3ade17b6af09911052531bc7548bf84ed44072c8d49861d9838a7a1445925cec"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1+1"
   flutter_quill:
     dependency: "direct main"
     description:
@@ -501,6 +509,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  mini_sprite:
+    dependency: transitive
+    description:
+      name: mini_sprite
+      sha256: b92bb4fcd81991b39798ce2f58ed3c044035cf22688df44977ee38c7765667e9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
+  nes_ui:
+    dependency: "direct main"
+    description:
+      name: nes_ui
+      sha256: "3520127bebac7af6d10852186222c766ee024cbd7d9248cb6009470b4de422b6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.30.0"
   objective_c:
     dependency: transitive
     description:
@@ -573,6 +597,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  phased:
+    dependency: transitive
+    description:
+      name: phased
+      sha256: "4dc19d589fd059268b07357767ac96eef2861eb5e8ceedf9d23fb933f0128396"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   pixel_snap:
     dependency: transitive
     description:
@@ -786,6 +818,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  universal_platform:
+    dependency: transitive
+    description:
+      name: universal_platform
+      sha256: "64e16458a0ea9b99260ceb5467a214c1f298d647c659af1bff6d3bf82536b1ec"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   url_launcher:
     dependency: transitive
     description:
