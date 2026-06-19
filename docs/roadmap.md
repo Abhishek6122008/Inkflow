@@ -9,9 +9,9 @@ Both backend and Flutter are currently empty scaffolds (backend: `.gitkeep` pack
 - [ ] `docs/api-contract.md` and `docs/data-model.md` kept in sync as build proceeds (this doc set)
 
 ## Phase 1 — Auth
-- Backend: `entity/User`, `repository/UserRepository`, `security/` (JWT filter, `SecurityConfig`), `controller/AuthController` (`register`, `login`), `dto/AuthRequest`, `dto/AuthResponse`
-- Flutter: login/register screens, `dio` interceptor attaching JWT, `flutter_secure_storage` for token persistence, `go_router` route guarding
-- Done when: register → login → authenticated request round-trip works end to end
+- [x] Backend: `entity/User`, `repository/UserRepository`, `security/` (`JwtService`, `JwtAuthFilter`, `AppUserDetailsService`, `SecurityConfig`), `controller/AuthController` (`register`, `login`), `dto/RegisterRequest`, `LoginRequest`, `AuthResponse`, `UserResponse`, `exception/GlobalExceptionHandler` — verified end to end against live Postgres (register → login → JWT issued; duplicate email → 409; bad password → 401; unauthenticated request → 403)
+- [ ] Flutter: login/register screens, `dio` interceptor attaching JWT, `flutter_secure_storage` for token persistence, `go_router` route guarding
+- Done when: register → login → authenticated request round-trip works end to end (backend half done; Flutter half remaining)
 
 ## Phase 2 — Document CRUD (no real-time yet)
 - Backend: `entity/Document`, `entity/DocumentCollaborator` (or similar, for sharing/permissions), `repository/DocumentRepository`, `controller/DocumentController` (create/list/get/delete/rename), `enums/DocumentRole` (owner/editor/viewer)
