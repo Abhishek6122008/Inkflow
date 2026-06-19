@@ -65,18 +65,18 @@ Inkflow is a **Google Docs–style collaborative editor**: open the same documen
 
 ```
 ┌───────────────────┐        REST (Dio/Retrofit)         ┌────────────────────────┐
-│    Flutter App     │ ───────────────────────────────▶  │    Spring Boot API      │
-│      (lib/)         │ ◀───────────────────────────────  │   (inkflow-backend/)     │
-│                      │                                    │                          │
-│   flutter_quill      │     STOMP over WebSocket (/ws)     │   WebSocket + OT engine  │
-│   (editor widget)    │ ◀──────────────────────────────▶  │     com.inkflow.ot       │
+│    Flutter App    │ ───────────────────────────────    │    Spring Boot API     │
+│      (lib/)       │ ───────────────────────────────    │  (inkflow-backend/)    │
+│                   │                                    │                        │
+│   flutter_quill   │     STOMP over WebSocket (/ws)     │ WebSocket + OT engine  │
+│   (editor widget) │ ◀──────────────────────────────▶  │   com.inkflow.ot       │
 └───────────────────┘                                    └────────────────────────┘
                                                                        │
                                                           ┌────────────┴────────────┐
                                                           ▼                         ▼
                                                      PostgreSQL                   Redis
-                                              (documents, users,           (presence, live
-                                                 doc history)              OT state cache)
+                                                 (documents, users,           (presence, live
+                                                    doc history)              OT state cache)
 ```
 
 ## 📂 Project structure
