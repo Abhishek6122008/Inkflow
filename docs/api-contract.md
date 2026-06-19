@@ -59,6 +59,15 @@ Rename only (content changes go through WebSocket, not REST).
 ### DELETE `/api/documents/{id}`
 `204 No Content`. Owner only.
 
+### PUT `/api/documents/{id}/content` (temporary — Phase 1 demo only)
+Direct REST save of the full Quill Delta, used only until the WebSocket/OT pipeline (Phase 3) replaces it for live edits.
+```json
+// Request
+{ "content": "Quill Delta JSON, as a string" }
+// Response 200
+{ "id": "uuid", "title": "string", "content": "string", "version": 1 }
+```
+
 ### POST `/api/documents/{id}/collaborators`
 ```json
 // Request

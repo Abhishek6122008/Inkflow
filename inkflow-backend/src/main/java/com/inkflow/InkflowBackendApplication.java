@@ -1,4 +1,4 @@
-package com.inkflow.inkflow_backend;
+package com.inkflow;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package com.inkflow.inkflow_backend;
+package com.inkflow;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
