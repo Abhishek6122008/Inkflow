@@ -1,6 +1,6 @@
-# Data Model (draft)
+# Data Model
 
-Draft only — nothing below is implemented yet. Update alongside actual `entity/` and `enums/` classes; this is the source of truth for schema intent.
+`User`, `Document`, `DocumentCollaborator`, and `DocumentRole` below are implemented and verified end to end. `DocumentSnapshot` is still a draft (Phase 5, not built yet). Update alongside actual `entity/` and `enums/` classes; this is the source of truth for schema intent.
 
 ## Entities (Postgres, JPA)
 
@@ -67,4 +67,5 @@ These are caches/working state, not source of truth — Postgres `Document.conte
 
 ## Open decisions
 - Should `Document.content` store the full Delta JSON or a compacted/compressed form? Start with plain JSON, optimize later if needed.
-- Index strategy: `DocumentCollaborator(userId)` for "list my documents" query — add when `DocumentRepository` is implemented.
+- Index strategy: `DocumentCollaborator(userId)` for the "list my documents" query (`findByUserId`) and `DocumentCollaborator(documentId, userId)` for access checks (`findByDocumentIdAndUserId`) — currently relies on the JPA-generated unique constraint index on `(documentId, userId)` only; a dedicated index on `userId` alone may be worth adding once collaborator counts grow.
+- Pre-existing `Document` rows created before `DocumentCollaborator` existed have no membership row by default (since `ddl-auto=update` only adds the table, it doesn't backfill data) — these were backfilled manually with an `OWNER` row per document's `ownerId` when this feature shipped. Any future environment promotion (e.g. seeding a new environment from an old `documents` dump) needs the same backfill.

@@ -30,13 +30,17 @@ Inkflow is a collaborative rich-text editor: multiple clients edit the same docu
 - **Postgres**: durable storage — documents, users, and periodic snapshots/history of document content (not necessarily every single op).
 - **JWT**: stateless auth for REST; the same token is used to authenticate the STOMP CONNECT frame.
 
-## Open decisions (resolve before/while building real-time sync)
+## Real-time sync — implemented design (Phase 3)
 
-- Snapshot cadence: do we persist on every op, debounce, or snapshot every N ops / T seconds?
-- Multi-instance backend: if we ever run >1 backend instance, OT state in Redis (not just in-memory) becomes mandatory for correctness. Single instance is fine for now.
-- Conflict/version numbering scheme for OT (client revision tracking — needed so the server knows what to transform incoming ops against).
+`com.inkflow.ot` is a line-for-line Java port of `dart_quill_delta` (the OT engine `flutter_quill` itself uses), so server-side `transform`/`compose` results are bit-for-bit identical to what the Flutter client would produce — both sides converge on the same document state without drift.
 
-These should be settled and written into this doc once `com.inkflow.ot` design starts (see `roadmap.md` Phase 3).
+- **Canonical state**: `DocumentSessionRegistry` holds one in-memory `DocumentSession` (current `Delta` content + `version` + a bounded 200-entry op history) per open document, created lazily on first edit via a `ConcurrentHashMap`.
+- **Conflict resolution / versioning**: client sends `{op, baseVersion}` to `/app/doc/{id}/edit`. Server transforms `op` against every history entry newer than `baseVersion` (in order), composes the result onto the canonical content, increments `version`, and broadcasts the transformed op + new version to `/topic/doc/{id}`.
+- **Echo strategy**: the server broadcasts to *all* subscribers including the original sender — there is no client-side optimistic-apply skip. The client applies whatever comes back over the topic for every author except itself (it matches on `authorId` to recognize the echo of its own op and only consumes the version number from it, since flutter_quill already applied the local edit synchronously when the user typed).
+- **Persistence cadence**: every applied op is persisted to Postgres immediately (`DocumentSessionRegistry.persist`) — simplest correct option at demo scale. A debounced/snapshot cadence can replace this later without touching the OT logic itself.
+- **Multi-instance backend**: explicitly out of scope — `DocumentSessionRegistry`'s state is in-memory and per-process. Running >1 backend instance requires moving this to Redis-backed shared state first.
+- **Auth**: STOMP CONNECT frames carry the same JWT bearer token as REST, validated in `StompAuthChannelInterceptor` (chosen over WebSocket-handshake-header auth since handshake headers aren't reliable across all SockJS fallback transports).
+- **Permission enforcement**: `DocumentService.resolveEditorUserId` (OWNER/EDITOR only) is reused by the WS controller, so the VIEWER-blocked-from-editing rule is defined in exactly one place, shared with the REST edit path.
 
 ## JDK / build note
 

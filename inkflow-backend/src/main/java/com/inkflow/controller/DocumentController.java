@@ -1,8 +1,11 @@
 package com.inkflow.controller;
 
+import com.inkflow.dto.AddCollaboratorRequest;
+import com.inkflow.dto.CollaboratorResponse;
 import com.inkflow.dto.CreateDocumentRequest;
 import com.inkflow.dto.DocumentResponse;
 import com.inkflow.dto.DocumentSummaryResponse;
+import com.inkflow.dto.RenameDocumentRequest;
 import com.inkflow.dto.UpdateDocumentContentRequest;
 import com.inkflow.service.DocumentService;
 import jakarta.validation.Valid;
@@ -10,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -54,5 +59,29 @@ public class DocumentController {
             @Valid @RequestBody UpdateDocumentContentRequest request
     ) {
         return ResponseEntity.ok(documentService.updateContent(authentication.getName(), id, request));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<DocumentSummaryResponse> rename(
+            Authentication authentication,
+            @PathVariable UUID id,
+            @Valid @RequestBody RenameDocumentRequest request
+    ) {
+        return ResponseEntity.ok(documentService.rename(authentication.getName(), id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(Authentication authentication, @PathVariable UUID id) {
+        documentService.delete(authentication.getName(), id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/collaborators")
+    public ResponseEntity<List<CollaboratorResponse>> addCollaborator(
+            Authentication authentication,
+            @PathVariable UUID id,
+            @Valid @RequestBody AddCollaboratorRequest request
+    ) {
+        return ResponseEntity.ok(documentService.addCollaborator(authentication.getName(), id, request));
     }
 }

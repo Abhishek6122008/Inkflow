@@ -39,4 +39,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ErrorResponse.of(404, "DOCUMENT_NOT_FOUND", ex.getMessage()));
     }
+
+    @ExceptionHandler(DocumentAccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleDocumentAccessDenied(DocumentAccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.of(403, "DOCUMENT_ACCESS_DENIED", ex.getMessage()));
+    }
 }
