@@ -71,6 +71,21 @@ class ApiClient {
     final response = await dio.put('/api/documents/$id/content', data: {'content': content});
     return response.data as Map<String, dynamic>;
   }
+
+  Future<Map<String, dynamic>> renameDocument(String id, String title) async {
+    final response = await dio.patch('/api/documents/$id', data: {'title': title});
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<void> deleteDocument(String id) => dio.delete('/api/documents/$id');
+
+  Future<List<dynamic>> addCollaborator(String id, String email, String role) async {
+    final response = await dio.post('/api/documents/$id/collaborators', data: {
+      'email': email,
+      'role': role,
+    });
+    return response.data as List<dynamic>;
+  }
 }
 
 /// Extracts a human-readable message from a backend ErrorResponse, falling
