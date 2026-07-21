@@ -43,6 +43,10 @@ docs/
 tmp_wstest*/
 boot.log
 boot-err.log
+CLAUDE.md
+.vscode/
+mvnw
+flutter_*.log
 
 # Android Studio will place build artifacts here
 /android/app/debug
