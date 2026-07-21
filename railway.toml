@@ -1,0 +1,8 @@
+[build]
+builder = "nixpacks"
+buildCommand = "cd inkflow-backend && ./mvnw clean package -DskipTests"
+
+[deploy]
+startCommand = "java -jar inkflow-backend/target/*.jar"
+healthcheckPath = "/api/auth/login"
+healthcheckTimeout = 60
