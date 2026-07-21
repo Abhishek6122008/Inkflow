@@ -31,6 +31,7 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
   int _version = 0;
   DocumentSyncService? _sync;
   StreamSubscription<DocChange>? _changeSubscription;
+  List<PresenceUser> _presentUsers = const [];
 
   bool get _canEdit => _role != 'VIEWER';
 
@@ -65,8 +66,8 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
 
       if (_canEdit) {
         _changeSubscription = _controller.document.changes.listen(_onDocumentChange);
-        await _connectSync();
       }
+      await _connectSync();
     } catch (e) {
       setState(() {
         _error = apiErrorMessage(e);
@@ -86,10 +87,11 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
       onRemoteOp: _applyRemoteOp,
       onVersionAck: (version) => setState(() => _version = version),
       onError: (code, message) => setState(() => _error = '$code: $message'),
+      onPresenceChanged: (users) => setState(() => _presentUsers = users),
+      onConnectionStatus: (connected) => setState(() => _isConnected = connected),
     );
     _sync = sync;
     await sync.connect();
-    setState(() => _isConnected = true);
   }
 
   void _onDocumentChange(DocChange change) {
@@ -117,15 +119,16 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
         ),
         title: Text(_title),
         actions: [
-          if (!_canEdit)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Center(child: Text('View only')),
-            )
-          else if (!_isConnected)
+          if (_presentUsers.isNotEmpty) _PresenceRow(users: _presentUsers),
+          if (!_isConnected)
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Center(child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
+            )
+          else if (!_canEdit)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Center(child: Text('View only')),
             )
           else
             const Padding(
@@ -167,6 +170,47 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
                     ),
                   ],
                 ),
+    );
+  }
+}
+
+class _PresenceRow extends StatelessWidget {
+  const _PresenceRow({required this.users});
+
+  final List<PresenceUser> users;
+
+  @override
+  Widget build(BuildContext context) {
+    final shown = users.take(5).toList();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Tooltip(
+        message: users.map((u) => u.displayName).join(', '),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final user in shown)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: CircleAvatar(
+                  radius: 14,
+                  child: Text(
+                    user.displayName.isNotEmpty ? user.displayName[0].toUpperCase() : '?',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ),
+            if (users.length > shown.length)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: CircleAvatar(
+                  radius: 14,
+                  child: Text('+${users.length - shown.length}', style: const TextStyle(fontSize: 11)),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
